@@ -1,0 +1,13 @@
+{
+	"compilerOptions": {
+		"target": "es2015",
+		"sourceMap": true,
+		"module": "commonjs",
+		"strict": true,
+		"esModuleInterop": true,
+		"baseUrl": "src",
+		"rootDir": "src",
+		"outDir": "./dist"
+	},
+	"exclude": ["**/*.test.ts", "**/*.test.js"]
+}
