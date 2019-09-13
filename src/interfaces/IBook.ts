@@ -7,17 +7,22 @@ export interface IBookIdentifiers {
 
 export enum BookProvider {
 	OpenLibrary = 'OpenLibrary',
-	GoogleBooks = 'GoogleBooks'
+	GoogleBooks = 'GoogleBooks',
+	ISBNSEARCH = 'ISBNSearch',
+	JUSTBOOK = 'JustBook',
 }
 
 export default interface IBook {
-	provider: BookProvider;
+	sources: BookProvider[];
 	identifiers: IBookIdentifiers;
 	title: string;
 	subtitle?: string;
 	notes?: string;
+	description?: string;
 	pages: number;
-	publishDate: Date | string;
+	publishDate?: Date | string;
+	editors?: string[];
+	publishers?: string[];
 	authors: string[];
 	subjects: string[];
 }

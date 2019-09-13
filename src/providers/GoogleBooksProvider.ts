@@ -1,17 +1,23 @@
 import axios, { AxiosInstance } from 'axios';
 import querystring from 'querystring';
-import formatISBN from './formatISBN';
-import IBook, { BookProvider } from './IBook';
+import IBook, { BookProvider } from '../interfaces/IBook';
 import IBookProvider, {
 	IBookProviderGet,
 	IBookProviderGets,
-} from './IBookProvider';
+} from '../interfaces/IBookProvider';
+import formatISBN from '../tools/formatISBN';
 
+/**
+ * The industry identifiers of google
+ */
 export enum IndustryIdentifier {
 	ISBN_10 = 'ISBN_10',
 	ISBN_13 = 'ISBN_13',
 }
 
+/**
+ * The format of a google book API return
+ */
 export interface IGoogleBook {
 	volumeInfo: {
 		title: string;
@@ -33,6 +39,10 @@ export interface IGoogleBook {
 	};
 }
 
+/**
+ * Formats the google results to our format
+ * @param googleBook The JSON object from the google API
+ */
 export const mapGoogleBooksResult = (googleBook: any): IBook => {
 	if (!(googleBook instanceof Object)) {
 		throw new Error('Cannot mapGoogleBooksResult');
@@ -62,27 +72,26 @@ export const mapGoogleBooksResult = (googleBook: any): IBook => {
 	);
 	return {
 		authors,
+		description,
 		identifiers: {
 			isbn10: industryByType.get(IndustryIdentifier.ISBN_10),
 			isbn13: industryByType.get(IndustryIdentifier.ISBN_13),
 		},
-		notes: description,
 		pages: pageCount,
-		provider: BookProvider.GoogleBooks,
 		publishDate: publishedDate,
+		sources: [BookProvider.GoogleBooks],
 		subjects: categories,
 		subtitle,
 		title,
 	};
 };
 
+const http = axios.create({
+	baseURL: `https://www.googleapis.com/books/v1/volumes`,
+});
+
 export default class OpenLibraryBookProvider implements IBookProvider {
-	private http: AxiosInstance;
-	constructor(private apiKey: string) {
-		this.http = axios.create({
-			baseURL: `https://www.googleapis.com/books/v1/volumes`,
-		});
-	}
+	constructor(private apiKey: string) {}
 
 	public async gets(
 		options: IBookProviderGets
@@ -92,7 +101,7 @@ export default class OpenLibraryBookProvider implements IBookProvider {
 		}
 		options.isbns = options.isbns.map(formatISBN);
 		const promises = options.isbns.map(async isbn => {
-			const { data } = await this.http.get(
+			const { data } = await http.get(
 				`?${querystring.stringify({ key: this.apiKey, q: `isbn:${isbn}` })}`
 			);
 			if (data.totalItems === 0) {

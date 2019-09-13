@@ -2,6 +2,7 @@
 	"compilerOptions": {
 		"target": "es2015",
 		"sourceMap": true,
+		"declaration": true,
 		"module": "commonjs",
 		"strict": true,
 		"esModuleInterop": true,
@@ -9,5 +10,5 @@
 		"rootDir": "src",
 		"outDir": "./dist"
 	},
-	"exclude": ["**/*.test.ts", "**/*.test.js"]
+	"exclude": ["test/**/*.ts", "test/**/*.js"]
 }

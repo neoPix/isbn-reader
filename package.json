@@ -4,22 +4,30 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node index.ts",
+    "clean": "rimraf dist",
+    "dev": "ts-node test/index.ts",
+    "build": "yarn clean && tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.19.0"
+    "@types/iconv": "^2.1.16",
+    "axios": "^0.19.0",
+    "cheerio": "^1.0.0-rc.3",
+    "iconv": "^2.3.4"
   },
   "devDependencies": {
+    "@types/cheerio": "^0.22.13",
     "@types/dotenv": "^6.1.1",
     "dotenv": "^8.1.0",
     "prettier": "^1.18.2",
+    "rimraf": "^3.0.0",
     "ts-node": "^8.3.0",
     "tslint": "^5.19.0",
     "tslint-config-prettier": "^1.18.0",
     "tslint-config-security": "^1.16.0",
-    "typescript": "^3.6.2"
+    "typescript": "^3.6.2",
+    "yarn": "^1.17.3"
   }
 }
