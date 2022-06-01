@@ -24,14 +24,15 @@ const provider = new CompleteMissingInformationsProvider({
 provider
 	.gets({
 		isbns: [
-			'9782809481426',
+			'9782016252109'
+			/* '9782809481426',
 			'0201558025',
 			'9781491904152',
 			'9782016252109',
 			'9782746052949',
 			'9782263154355',
-			'9782706118852'
+			'9782706118852' */
 		],
 	})
-	.then(data => console.log(data))
+	.then(data => console.log(data.get('9782016252109')))
 	.catch(e => console.error(e));

@@ -25,4 +25,5 @@ export default interface IBook {
 	publishers?: string[];
 	authors: string[];
 	subjects: string[];
+	images?: string[];
 }

@@ -1,6 +1,5 @@
 import axios from 'axios';
 import cheerio from 'cheerio';
-const Iconv = require('iconv').Iconv;
 import IBook, { BookProvider } from '../interfaces/IBook';
 import IBookProvider, {
 	IBookProviderGet,
@@ -12,18 +11,14 @@ const http = axios.create({
 	baseURL: 'https://www.justbooks.co.uk/search',
 });
 
-export const addIfEmpty = (
-	size: number = 13,
-	items: Array<string> | undefined,
-	item: string
-): Array<string> => {
-	if (!Array.isArray(items)) {
-		return [item];
+export const manageEmptyString = (str: string): string | undefined =>
+	str && str.length ? str : undefined;
+
+export const split = (str: string, char: string): string[] => {
+	if (str && str.length) {
+		return str.split(char).map(str => str.trim());
 	}
-	if (item.length == size && !items.includes(item)) {
-		return [...items, item];
-	}
-	return items;
+	return [];
 };
 
 export const JustBookResult = (data: Buffer): IBook | undefined => {
@@ -31,31 +26,24 @@ export const JustBookResult = (data: Buffer): IBook | undefined => {
 		decodeEntities: false,
 	});
 	const book = $('.attributes');
-	const [isbn13, isbn10] = $('h1', book)
-		.text()
-		.split('/')
-		.map(str => str.trim());
-	const publishers = $('span[itemprop="publisher"]', book)
-		.text()
-		.split(',')
-		.map(str => str.trim());
+	const [isbn13, isbn10] = split($('h1', book).text(), '/');
+	const publishers = split($('span[itemprop="publisher"]', book).text(), ',');
+	const authors = split($('span[itemprop="author"]', book).text(), ';');
+	const image = $('#coverImage').attr('src');
 	const year = publishers.pop();
-	const authors = $('span[itemprop="author"]', book)
-		.text()
-		.split(',')
-		.map(str => str.trim());
 	return {
 		authors,
-		description: $('#bookSummary').text(),
+		description: manageEmptyString($('#bookSummary').text()),
 		identifiers: {
 			isbn10: [isbn10],
 			isbn13: [isbn13],
 		},
+		images: [],
 		pages: 0,
 		publishDate: year,
 		publishers,
 		sources: [BookProvider.JUSTBOOK],
-		subjects: [],
+		subjects: image ? [image] : [],
 		title: $('#describe-isbn-title', book).text(),
 	};
 };
